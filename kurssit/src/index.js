@@ -1,48 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-
-
-const Header = (props) => {
-    console.log("Header", props.header)
-    return (
-        <h3>{props.header}</h3>
-       
-        
-    ) 
-     
- }
-const Course = (props) => {
-    return (
-        <ul>
-         {props.courses.map(c => <li key={c.id}> 
-         <Header header= {c.name}/> 
-         <Content content= {c.parts}/> </li>)}
-        </ul>
-    )
-}
-
-const Content = (props) => {
-  return (
-    <ul>
-    <Part part={props.content.map(nota =>
-         <li key={nota.id}> {nota.name} {nota.exercises} </li>)}/> 
-    </ul>
-    )
-}
-
-const Part = (props) => {
-    console.log("Part", props.part)
-    return (  
-         props.part      
-    )
-}
-
-const Total = (props) => {
-    const total = props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises
-    return   <p> yhteensä {total} tehtävää </p>
-    
-        }
+import Course from './components/Courses'
 
 
 const App = () => {
@@ -75,28 +33,28 @@ const App = () => {
      parts: [
         {
             name: 'Reactin perusteet',
-            exercises: 10,
+            exercises: 30,
             id: 1
           },
         {
-            name: 'Reactin perusteet',
-            exercises: 10,
+            name: 'Jotain muuta',
+            exercises: 40,
             id: 2
           }  
         ]
     },
     {
-        name: "Toinen kurssi",
+        name: "Kolmas kurssi",
         id: 3,
         parts: [
            {
-               name: 'Reactin perusteet',
-               exercises: 10,
+               name: 'Reactin jatko',
+               exercises: 2,
                id: 1
              },
            {
-               name: 'Reactin perusteet',
-               exercises: 10,
+               name: 'Jotain muuta lisää',
+               exercises: 70,
                id: 2
              }  
            ]
@@ -105,9 +63,13 @@ const App = () => {
     
 
     return (
-      <Course courses={courses}/>
-    )
-  }
-  
+      <div>
+      <h1>Opetusohjelma: </h1>
+      {courses.map(course =>
+        <Course course={course} key={course.id}/>)}
+      </div>
+)
+}
+
   ReactDOM.render(
   <App/>,document.getElementById('root'))
