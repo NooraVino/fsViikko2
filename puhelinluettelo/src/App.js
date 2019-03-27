@@ -1,5 +1,6 @@
-import axios from 'axios'
+
 import React, { useState, useEffect } from 'react'
+import personService from './services/persons'
 
 
 const Filter = (props) => {
@@ -19,7 +20,7 @@ const Persons = (props) => {
 
 const AddNewPersonForm = (props) => {
   return (
-    <form onSubmit={props.addName}>
+    <form onSubmit={props.addPerson}>
     <div> nimi:  <input value={props.newName}  onChange={props.handleNameChange}/></div>
     <div> numero:  <input value={props.newNumber}  onChange={props.handleNumberChange}/></div>
     <div><button type="submit">lisää</button></div>
@@ -35,17 +36,15 @@ const App = () => {
 
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
-  console.log('render', persons.length, 'notes')
+ 
   
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault()
     const person = {
         name: newName,
@@ -55,11 +54,16 @@ const App = () => {
   window.alert(`${person.name} on jo luettelossa`)
   }
   else {
-    setPersons(persons.concat(person))
-    setNewName('')
+    personService
+    .create(person)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+      setNewName('')
     setNewNumber('')
+    })  
   }
   }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -84,7 +88,7 @@ const App = () => {
       <h2>Puhelinluettelo</h2>
       <AddNewPersonForm newName={newName} handleNameChange={handleNameChange}
                     newNumber={newNumber} handleNumberChange = {handleNumberChange}
-                    addName={addName}/>
+                    addPerson={addPerson}/>
      
       <h2>Numerot</h2>
       <Persons persons={showAll}/>
