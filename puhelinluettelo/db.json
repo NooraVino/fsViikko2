@@ -1,3 +1,29 @@
 {
-  "persons": []
+  "persons": [
+    {
+      "name": "Noora Virolainen",
+      "number": "0983098230",
+      "id": 1
+    },
+    {
+      "name": "Ville Kainulainen",
+      "number": "982828272",
+      "id": 2
+    },
+    {
+      "name": "Meeri Kainulainen",
+      "number": "878373763",
+      "id": 3
+    },
+    {
+      "name": "Jaana K",
+      "number": "7237272",
+      "id": 4
+    },
+    {
+      "name": "Hessu HG",
+      "number": "62626",
+      "id": 5
+    }
+  ]
 }
