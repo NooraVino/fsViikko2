@@ -13,10 +13,12 @@ const Persons = (props) => {
     props.persons.map(person =>
       <div key={person.name}>
         {person.name} {person.number}
+        <button onClick={() =>props.deletePerson(person.id)}>poista</button>
       </div>
     )
   )
 }
+
 
 const AddNewPersonForm = (props) => {
   return (
@@ -43,26 +45,46 @@ const App = () => {
       })
   }, [])
  
-  
+  const deletePerson = (id) => {
+    const person = persons.find(p => p.id === id)
+    if (window.confirm(`Poistetaanko ${person.name}`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-    const person = {
+    const newPerson = {
         name: newName,
         number: newNumber
     }
-  if (persons.find(p => p.name === person.name)) {
-  window.alert(`${person.name} on jo luettelossa`)
-  }
-  else {
+    const oldPerson = persons.find(p => p.name === newPerson.name)
+  
+  
+    if (oldPerson && window.confirm(`${newPerson.name} on jo luettelossa`)) {
     personService
-    .create(person)
-    .then(response => {
-      setPersons(persons.concat(response.data))
-      setNewName('')
+    .update(oldPerson.id, newPerson)
+   .then(response => {
+    setPersons(persons.concat(response.data))})
+   
+return
+   }
+   personService
+   .create({
+    name: newName,
+    number: newNumber
+  })
+  .then(response =>{
+    setPersons(persons.concat(response.data))
+    setNewName('')
     setNewNumber('')
-    })  
-  }
-  }
+    })
+}
+  
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -91,7 +113,7 @@ const App = () => {
                     addPerson={addPerson}/>
      
       <h2>Numerot</h2>
-      <Persons persons={showAll}/>
+      <Persons persons={showAll} deletePerson={deletePerson}/>
     </div>
   )
   }
