@@ -65,16 +65,25 @@ const App = () => {
   const deletePerson = (id) => {
     const person = persons.find(p => p.id === id)
     if (window.confirm(`Poistetaanko ${person.name}`)) {
-      setMessage(`Poistettu ${person.name}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
       personService
         .deletePerson(id)
         .then(() => {
-          setPersons(persons.filter(p => p.id !== id))
-          
+            setMessage(`Poistettu ${person.name}`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 3000)
+          setPersons(persons.filter(p => p.id !== id))  
         })
+        .catch(error => {
+          setMessage(
+            `muistiinpano "'${person.name}'" on jo valitettavasti poistettu palvelimelta`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+           setPersons(persons.filter(p => p.id !== id)) 
+        })
+
     }
   }
 
