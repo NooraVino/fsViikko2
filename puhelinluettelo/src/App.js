@@ -1,6 +1,20 @@
 
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
+
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
 
 
 const Filter = (props) => {
@@ -12,20 +26,21 @@ const Filter = (props) => {
 const Persons = (props) => {
   return (
     props.persons.map(person =>
-      <div key={person.name}>
+      <div className= 'text' key={person.name}>
         {person.name} {person.number}
-        <button onClick={() => props.deletePerson(person.id)}>poista</button>
+        <button className='buttonStyle' onClick={() => props.deletePerson(person.id)}>poista</button>
       </div>
     )
   )
 }
+
 
 const AddNewPersonForm = (props) => {
   return (
     <form onSubmit={props.addPerson}>
       <div> nimi:  <input value={props.newName} onChange={props.handleNameChange} /></div>
       <div> numero:  <input value={props.newNumber} onChange={props.handleNumberChange} /></div>
-      <div><button type="submit">lisää</button></div>
+      <div><button className='buttonStyle' type="submit">lisää</button></div>
     </form>
   )
 }
@@ -36,6 +51,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
 
   useEffect(() => {
@@ -49,10 +65,15 @@ const App = () => {
   const deletePerson = (id) => {
     const person = persons.find(p => p.id === id)
     if (window.confirm(`Poistetaanko ${person.name}`)) {
+      setMessage(`Poistettu ${person.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
       personService
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          
         })
     }
   }
@@ -67,7 +88,10 @@ const App = () => {
 
 
     if (oldPerson && window.confirm(`${newPerson.name} on jo luettelossa. Haluatko korvata vanhan numeron?`)) {
-    
+      setMessage(`Korvattu ${oldPerson.name}. Uusi numero on ${newNumber}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
       personService
         .update({...oldPerson, number:newNumber})
         .then(response => {
@@ -79,6 +103,10 @@ const App = () => {
 
       return
     }
+    setMessage(`Lisätty ${newPerson.name} numerolla ${newNumber}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     personService
       .create(newPerson)
       .then(response => {
@@ -109,13 +137,14 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={message}/>
       <Filter handleFilterChange={handleFilterChange} value={filter} />
-      <h2>Puhelinluettelo</h2>
+      <h2 className='h2'>Puhelinluettelo</h2>
       <AddNewPersonForm newName={newName} handleNameChange={handleNameChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange}
         addPerson={addPerson} />
 
-      <h2>Numerot</h2>
+      <h2 className='h2'>Numerot</h2>
       <Persons persons={showAll} deletePerson={deletePerson} />
     </div>
   )
